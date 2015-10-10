@@ -17,7 +17,7 @@ function M.section(form)
 	if uci:get_first("gluon-setup-mode", "setup_mode", "configured") == "0" then
 		o:value("")
 	else
-		o:value(site.site_code, site.site_name)
+		o:value(site.site_code, site.site_code)
 	end
         
         for filename in fs.dir("/lib/gluon/site-select") do
