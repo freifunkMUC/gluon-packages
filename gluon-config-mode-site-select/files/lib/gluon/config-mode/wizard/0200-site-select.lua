@@ -2,16 +2,13 @@ local cbi = require "luci.cbi"
 local uci = luci.model.uci.cursor()
 local site = require 'gluon.site_config'
 local fs = require "nixio.fs"
+local i18n = require "luci.i18n"
 
 local sites = {}
 local M = {}
 
 function M.section(form)
-	local s = form:section(cbi.SimpleSection, nil, [[
-	Hier hast du die Möglichkeit die Community, mit der sich dein
-	Knoten verbindet, auszuwählen. Bitte denke daran, dass dein Router
-	sich dann nur mit dem Netz der ausgewählten Community verbindet.
-	]])
+	local s = form:section(cbi.SimpleSection, nil, i18n.translate("Site-select"))
 		
 	local o = s:option(cbi.ListValue, "site_code", "Segment")
 	o.rmempty = false
@@ -23,11 +20,11 @@ function M.section(form)
 		o:value(site.site_code, site.site_name)
 	end
         
-        for site in fs.dir("/lib/gluon/site-select") do
-                -- trim ".conf"
-                local s = string.sub(site, 1, -6)
+        for filename in fs.dir("/lib/gluon/site-select") do
+                -- trim file extension ".conf"
+                local sitecode = string.sub(filename, 1, -6)
                 -- add to list
-                o:value(s, s) 
+                o:value(sitecode, sitecode) 
         end
 
 end
