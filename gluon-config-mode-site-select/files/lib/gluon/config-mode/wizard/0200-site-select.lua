@@ -12,14 +12,8 @@ function M.section(form)
 	Knoten verbindet, auszuwählen. Bitte denke daran, dass dein Router
 	sich dann nur mit dem Netz der ausgewählten Community verbindet.
 	]])
-	
-	uci:foreach('siteselect', 'site',
-	function(s)
-		table.insert(sites, s['.name'])
-	end
-	)
-	
-	local o = s:option(cbi.ListValue, "community", "Community")
+		
+	local o = s:option(cbi.ListValue, "site_code", "Segment")
 	o.rmempty = false
 	o.optional = false
 
@@ -28,19 +22,23 @@ function M.section(form)
 	else
 		o:value(site.site_code, site.site_name)
 	end
-
-	for index, site in ipairs(sites) do
-		o:value(site, uci:get('siteselect', site, 'sitename'))
-	end
+        
+        for site in fs.dir("/lib/gluon/site-select") do
+                -- trim ".conf"
+                local s = string.sub(site, 1, -6)
+                -- add to list
+                o:value(s, s) 
+        end
 
 end
 
 function M.handle(data)
 
-	if data.community ~= site.site_code then
-		
-		fs.copy(uci:get('siteselect', data.community , 'path'), '/lib/gluon/site.conf')
-		uci:set('currentsite', 'current', 'name', data.community)
+	if data.site_code ~= site.site_code then
+		-- copy new site conf
+		fs.copy('/lib/gluon/site-select/' .. data.site_code .. '.conf', '/lib/gluon/site.conf')
+		-- store new site conf in uci currentsite
+                uci:set('currentsite', 'current', 'name', data.site_code)
 		uci:save('currentsite')
 		uci:commit('currentsite')		
 		os.execute('sh "/lib/gluon/site-upgrade"')

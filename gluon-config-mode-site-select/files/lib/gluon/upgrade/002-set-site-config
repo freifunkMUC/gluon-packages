@@ -7,6 +7,7 @@ local c = uci.cursor()
 
 local currentsite = c:get("currentsite", "current", "name")
 
+-- make /etc/config/currentsite persistent, if it isn't already
 local file = "/etc/sysupgrade.conf"
 local configured = false
 
@@ -22,6 +23,7 @@ if configured == false then
   f:close()
 end
 
-if site.site_name ~= c:get('siteselect', currentsite, 'sitename') then
-  fs.copy(c:get('siteselect', currentsite , 'path'), '/lib/gluon/site.conf')
+-- update site.conf to current choice in /etc/config/currentsite
+if site.site_code ~= currentsite then
+  fs.copy('/lib/gluon/site-select/' .. currentsite .. '.conf', '/lib/gluon/site.conf')
 end
