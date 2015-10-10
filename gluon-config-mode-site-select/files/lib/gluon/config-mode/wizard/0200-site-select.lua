@@ -8,7 +8,8 @@ local sites = {}
 local M = {}
 
 function M.section(form)
-	local s = form:section(cbi.SimpleSection, nil, i18n.translate("Site-select"))
+	local s = form:section(cbi.SimpleSection, nil, 
+                i18n.translate("Please choose the site code of your segment"))
 		
 	local o = s:option(cbi.ListValue, "site_code", "Segment")
 	o.rmempty = false
