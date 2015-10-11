@@ -18,14 +18,20 @@ function M.section(form)
 	if uci:get_first("gluon-setup-mode", "setup_mode", "configured") == "0" then
 		o:value("")
 	else
-		o:value(site.site_code, site.site_code)
+		o:value(site.site_code, site.site_name)
 	end
         
         for filename in fs.dir("/lib/gluon/site-select") do
                 -- trim file extension ".conf"
-                local sitecode = string.sub(filename, 1, -6)
+                sitecode = string.sub(filename, 1, -6)
+
+                -- getting site_name from conf file
+                f = io.open("/lib/gluon/site-select/" .. filename, "r")
+                fcontent = f:read("*a")
+                _, _, sitename = string.find(fcontent, "site_name = \'(.-)\',")
+
                 -- add to list
-                o:value(sitecode, sitecode) 
+                o:value(sitecode, sitename) 
         end
 
 end
