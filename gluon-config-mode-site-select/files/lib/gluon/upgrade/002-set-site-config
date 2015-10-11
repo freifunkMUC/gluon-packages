@@ -1,0 +1,29 @@
+#!/usr/bin/lua
+
+local uci = require 'luci.model.uci'
+local site = require 'gluon.site_config'
+local fs = require "nixio.fs"
+local c = uci.cursor()
+
+local currentsite = c:get("currentsite", "current", "name")
+
+-- make /etc/config/currentsite persistent, if it isn't already
+local file = "/etc/sysupgrade.conf"
+local configured = false
+
+for line in io.lines(file) do
+  if line == "/etc/config/currentsite" then
+    configured = true
+  end
+end
+
+if configured == false then
+  f = io.open(file,"a")
+  f:write("/etc/config/currentsite\n")
+  f:close()
+end
+
+-- update site.conf to current choice in /etc/config/currentsite
+if site.site_code ~= currentsite then
+  fs.copy('/lib/gluon/site-select/' .. currentsite .. '.conf', '/lib/gluon/site.conf')
+end
