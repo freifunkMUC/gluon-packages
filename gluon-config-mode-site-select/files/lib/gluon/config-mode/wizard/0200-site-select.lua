@@ -22,13 +22,13 @@ function M.section(form)
 	end
         
         for filename in fs.dir("/lib/gluon/site-select") do
-                -- trim file extension ".conf"
+                -- trim file extension ".json"
                 sitecode = string.sub(filename, 1, -6)
 
-                -- getting site_name from conf file
+                -- getting site_name from json file
                 f = io.open("/lib/gluon/site-select/" .. filename, "r")
                 fcontent = f:read("*a")
-                _, _, sitename = string.find(fcontent, "site_name = \'(.-)\',")
+                _, _, sitename = string.find(fcontent, "\"site_name\":\"(.-)\",")
 
                 -- add to list
                 o:value(sitecode, sitename) 
@@ -40,7 +40,7 @@ function M.handle(data)
 
 	if data.site_code ~= site.site_code then
 		-- copy new site conf
-		fs.copy('/lib/gluon/site-select/' .. data.site_code .. '.conf', '/lib/gluon/site.conf')
+		fs.copy('/lib/gluon/site-select/' .. data.site_code .. '.json', '/lib/gluon/site.json')
 		-- store new site conf in uci currentsite
                 uci:set('currentsite', 'current', 'name', data.site_code)
 		uci:save('currentsite')
