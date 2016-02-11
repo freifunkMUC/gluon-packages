@@ -1,3 +1,5 @@
+local arg={...}
+
 local function loader()
    coroutine.yield('return ')
    coroutine.yield(io.open(arg[1]):read('*a'))
