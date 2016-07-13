@@ -25,5 +25,5 @@ end
 
 -- update site.conf to current choice in /etc/config/currentsite
 if site.site_code ~= currentsite then
-  fs.copy('/lib/gluon/site-select/' .. currentsite .. '.conf', '/lib/gluon/site.conf')
+  fs.copy('/lib/gluon/site-select/' .. currentsite .. '.json', '/lib/gluon/site.json')
 end
