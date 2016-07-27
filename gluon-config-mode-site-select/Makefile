@@ -34,9 +34,10 @@ define Package/gluon-config-mode-site-select/install
 	mkdir -p $(1)/lib/gluon/site-select/
 	$(CP) ./files/* $(1)/
 
-	lua -e 'print(require("cjson").encode(assert(loadfile("site_config.lua")("$(GLUON_SITEDIR)/extra/ffmuc.conf"))))' > $(1)/lib/gluon/site-select/ffmuc.json
-	lua -e 'print(require("cjson").encode(assert(loadfile("site_config.lua")("$(GLUON_SITEDIR)/extra/ffmuc_umland.conf"))))' > $(1)/lib/gluon/site-select/ffmuc_umland.json
-	lua -e 'print(require("cjson").encode(assert(loadfile("site_config.lua")("$(GLUON_SITEDIR)/extra/ffmuc_welcome.conf"))))' > $(1)/lib/gluon/site-select/ffmuc_welcome.json
+	for i in $(GLUON_SITEDIR)/extra/*.conf; do
+		lua -e 'print(require("cjson").encode(assert(loadfile("site_config.lua")("$i"))))' > $(1)/lib/gluon/site-select/`basename $i | cut -d. -f1`.json
+	done
+
 	DIR=$(1) sh create-config.sh
 	
 	$(call GluonInstallI18N,gluon-config-mode-site-select,$(1))
