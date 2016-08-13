@@ -34,6 +34,9 @@ define Package/gluon-config-mode-site-select/install
 	mkdir -p $(1)/lib/gluon/site-select/
 	$(CP) ./files/* $(1)/
 
+	lua -e 'print(require("cjson").encode(assert(loadfile("site_config.lua")("$(GLUON_SITEDIR)/extra/ffmuc.conf"))))' > $(1)/lib/gluon/site-select/ffmuc.json
+	lua -e 'print(require("cjson").encode(assert(loadfile("site_config.lua")("$(GLUON_SITEDIR)/extra/ffmuc_welcome.conf"))))' > $(1)/lib/gluon/site-select/ffmuc_welcome.json
+	lua -e 'print(require("cjson").encode(assert(loadfile("site_config.lua")("$(GLUON_SITEDIR)/extra/ffmuc_umland.conf"))))' > $(1)/lib/gluon/site-select/ffmuc_umland.json
 	lua -e 'print(require("cjson").encode(assert(loadfile("site_config.lua")("$(GLUON_SITEDIR)/extra/ffmuc01.conf"))))' > $(1)/lib/gluon/site-select/ffmuc01.json
 	lua -e 'print(require("cjson").encode(assert(loadfile("site_config.lua")("$(GLUON_SITEDIR)/extra/ffmuc02.conf"))))' > $(1)/lib/gluon/site-select/ffmuc02.json
 	lua -e 'print(require("cjson").encode(assert(loadfile("site_config.lua")("$(GLUON_SITEDIR)/extra/ffmuc03.conf"))))' > $(1)/lib/gluon/site-select/ffmuc03.json
