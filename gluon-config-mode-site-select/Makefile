@@ -8,14 +8,16 @@ PKG_BUILD_DEPENDS := lua-cjson/host
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include $(TOPDIR)/../package/gluon.mk
 
+GLUON_SITEDIR = '$(call qstrip,$(CONFIG_GLUON_SITEDIR))'
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
 define Package/gluon-config-mode-site-select
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=UI for changing the node-config
+  DEPENDS:=+gluon-core
 endef
 
 define Build/Prepare
