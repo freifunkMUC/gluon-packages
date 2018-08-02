@@ -18,3 +18,26 @@ if fs.stat(file) then
 end
 
 uci:save('gluon')
+
+-- exclude file from persisting during sysupgrade if exist
+local sysfile = "/etc/sysupgrade.conf"
+local tmpsysfile = "/tmp/sysupgrade.conf"
+local exist = false
+
+local fout = io.open(tmpsysfile,"a")
+
+for line in io.lines(sysfile) do
+	if line == file then
+		exist = true
+	else
+		fout:write(line .. "\n")
+	end
+end
+fout:close()
+
+if exist then
+	fs.remove(sysfile)
+	fs.move(tmpsysfile, sysfile)
+else
+	fs.remove(tmpsysfile)
+end
