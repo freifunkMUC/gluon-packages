@@ -1,0 +1,20 @@
+#!/usr/bin/lua
+
+local fs = require 'nixio.fs'
+local uci = require("simple-uci").cursor()
+
+local file = '/etc/config/currentsite'
+
+if not uci:get('gluon', 'core') then
+	uci:section('gluon', 'core', 'core')
+end
+if uci:get('gluon', 'system') then
+	uci:delete('gluon', 'system')
+end
+if fs.stat(file) then
+	local domain = uci:get('currentsite', 'current', 'name')
+	uci:set('gluon', 'core', 'domain', domain)
+	fs.remove(file)
+end
+
+uci:save('gluon')
