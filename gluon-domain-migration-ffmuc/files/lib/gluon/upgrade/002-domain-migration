@@ -25,6 +25,11 @@ local sysfile = "/etc/sysupgrade.conf"
 local tmpsysfile = "/tmp/sysupgrade.conf"
 local exist = false
 
+if not sys_stat.stat(sysfile) then
+    -- abort script as we do not need to remove sth. in an not-existent file
+    os.exit()
+end
+
 local fout = io.open(tmpsysfile,"a")
 
 for line in io.lines(sysfile) do
