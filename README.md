@@ -8,6 +8,7 @@ State of the different packages:
 
 - tecff-ath9k-broken-wifi-workaround
   - tries to recover nodes that have problems with wifi connections
+  - Upstream: https://github.com/tecff/gluon-packages/tree/master/tecff-ath9k-broken-wifi-workaround
  
 - tecff-respondd-watchdog
   - starts gluon-respondd if it isn't running
