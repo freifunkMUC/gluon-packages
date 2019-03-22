@@ -3,6 +3,10 @@ custom ffmuc packages feed for gluon
 
 State of the different packages:
 
+- ffho-autoupdater-wifi-fallback
+  - Implements switching to fallback mode if we are cut off from the mesh to autoupdate
+  - Upstream: https://git.ffho.net/FreifunkHochstift/ffho-packages/src/master/ffho-autoupdater-wifi-fallback
+
 - gluon-domain-migration-ffmuc
   - Migrates from multisite config to multidomain config
 
