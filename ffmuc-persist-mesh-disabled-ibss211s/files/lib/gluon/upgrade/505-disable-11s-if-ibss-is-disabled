@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+
+local uci = require("simple-uci").cursor()
+
+local disabled = uci:get('wireless', 'ibss_radio0', 'disabled')
+
+if disabled then
+    uci:set('wireless', 'mesh_radio0', 'disabled', disabled)
+end
+
+uci:save('wireless')
