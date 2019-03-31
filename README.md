@@ -7,6 +7,9 @@ State of the different packages:
   - Implements switching to fallback mode if we are cut off from the mesh to autoupdate
   - Upstream: https://git.ffho.net/FreifunkHochstift/ffho-packages/src/master/ffho-autoupdater-wifi-fallback
 
+- ffmuc-autoupgrade-experimental2testing
+  - Migrates all node which are on experimental to testing
+
 - ffmuc-persist-mesh-disabled-ibss211s
   - If mesh via ibss got manually disabled it will be disabled for mesh via 11s as well
 
