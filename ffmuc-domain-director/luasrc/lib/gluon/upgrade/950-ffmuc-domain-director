@@ -1,0 +1,58 @@
+#!/usr/bin/lua
+
+local json = require 'jsonc'
+local site = require 'gluon.site'
+local uci = require('simple-uci').cursor()
+local unistd = require 'posix.unistd'
+
+local ddutil = require 'ffmuc-domain-director.util'
+
+-- Create UCI configuration file if not present
+local touch_handle = io.popen("touch /etc/config/ffmuc")
+touch_handle:read('*all')
+touch_handle:close()
+
+-- Create UCI section
+local director_enabled = true
+if uci:get("ffmuc", "director", "enabled") ~= nil then
+	director_enabled = uci:get("ffmuc", "director", "enabled")
+end
+uci:section('ffmuc', 'director', 'director', {
+	enabled = director_enabled,
+})
+
+if site.domain_director.url(nil) ~= nil then
+	uci:set("ffmuc", "director", "url", site.domain_director.url())
+end
+
+if site.domain_director.switch_after_offline(nil) ~= nil then
+	uci:set("ffmuc", "director", "switch_after_offline", site.domain_director.switch_after_offline())
+end
+
+uci:commit("ffmuc")
+
+local cronfile = "/usr/lib/micron.d/ffmuc-domain-director"
+
+-- Check if director is enabled for the current domain
+if not ddutil.is_enabled_site() then
+  -- In case it is disabled, check for cronfile and delete if it exists
+  if unistd.access(cronfile) then
+    os.remove(cronfile)
+  end
+  -- Terminate here
+  return
+end
+
+local urandom = io.open('/dev/urandom', 'r')
+local seed1, seed2 = urandom:read(2):byte(1, 2)
+math.randomseed(seed1*0x100 + seed2)
+urandom:close()
+
+-- Perform domain acquisition at random minute every 3 hours
+local minute = math.random(0, 59)
+
+local f = io.open(cronfile, 'w')
+f:write("*/1 * * * *  /usr/bin/ffmuc-check-gw-reachability\n")
+f:write("*/5 * * * *  /usr/bin/ffmuc-switch-domain\n")
+f:write(string.format('%i */3 * * *  /usr/bin/ffmuc-get-domain\n', minute))
+f:close()
