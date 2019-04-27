@@ -3,6 +3,14 @@ custom ffmuc packages feed for gluon
 
 State of the different packages:
 
+- ffmuc-domain-director
+  - Based on https://github.com/freifunk-darmstadt/ffda-packages/tree/91a3bd3893/ffda-domain-director
+  - Makes the node ask a director for zone configuration
+
+- gluon-web-ffmuc-domain-director
+  - Based on https://github.com/freifunk-darmstadt/ffda-packages/tree/91a3bd3893/gluon-web-ffda-domain-director
+  - enables configuration via config-mode
+
 - ffho-autoupdater-wifi-fallback
   - Implements switching to fallback mode if we are cut off from the mesh to autoupdate
   - Upstream: https://git.ffho.net/FreifunkHochstift/ffho-packages/src/master/ffho-autoupdater-wifi-fallback
