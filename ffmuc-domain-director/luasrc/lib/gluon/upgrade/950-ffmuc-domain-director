@@ -1,16 +1,12 @@
 #!/usr/bin/lua
 
-local json = require 'jsonc'
 local site = require 'gluon.site'
 local uci = require('simple-uci').cursor()
-local unistd = require 'posix.unistd'
 
-local ddutil = require 'ffmuc-domain-director.util'
+local ddutil = require 'ffmuc-domain-director'
 
 -- Create UCI configuration file if not present
-local touch_handle = io.popen("touch /etc/config/ffmuc")
-touch_handle:read('*all')
-touch_handle:close()
+os.execute("touch /etc/config/ffmuc")
 
 -- Create UCI section
 local director_enabled = true
@@ -35,11 +31,8 @@ local cronfile = "/usr/lib/micron.d/ffmuc-domain-director"
 
 -- Check if director is enabled for the current domain
 if not ddutil.is_enabled_site() then
-  -- In case it is disabled, check for cronfile and delete if it exists
-  if unistd.access(cronfile) then
-    os.remove(cronfile)
-  end
-  -- Terminate here
+  -- In case it is disabled, delete cronfile
+  os.remove(cronfile)
   return
 end
 
