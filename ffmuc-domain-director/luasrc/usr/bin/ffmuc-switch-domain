@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
-local ddutil = require 'ffmuc-domain-director.util'
+local ddutil = require 'ffmuc-domain-director'
 
 -- Executes domain switch
 function switch_domain()
@@ -43,12 +43,9 @@ function switch_domain()
   uci:set("gluon", "core", "domain", target_domain)
   uci:commit("gluon")
   print("Executing reconfigure")
-  local gluon_reconfigure_handle = io.popen("gluon-reconfigure")
-  gluon_reconfigure_handle:read('*all')
-  gluon_reconfigure_handle:close()
+  os.execute("gluon-reconfigure")
   print("Rebooting now.")
-  local reboot_handle = io.popen("reboot")
-  reboot_handle:close()
+  os.execute("reboot")
 end
 
 if not ddutil.is_enabled() then

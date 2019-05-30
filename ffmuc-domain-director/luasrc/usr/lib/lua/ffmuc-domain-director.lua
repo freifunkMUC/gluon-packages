@@ -4,7 +4,7 @@ local require = require
 local tonumber = tonumber
 local type = type
 
-module 'ffmuc-domain-director.util'
+module 'ffmuc-domain-director'
 
 -- Returns true if provided path exists
 function path_exists(path)
@@ -33,7 +33,10 @@ end
 -- Returns switch-after time from UCI as UNIX epoch
 function get_switch_time()
   local uci = require('simple-uci').cursor()
-  local switch_time = uci:get('ffmuc', 'director', 'switch_after', -1)
+  local switch_time = uci:get('ffmuc', 'director', 'switch_after')
+  if switch_time == nil then
+    switch_time = -1
+  end
   if type(switch_time)=="string" then
     switch_time = tonumber(switch_time)
   end
@@ -43,7 +46,10 @@ end
 -- Returns treshold for node-offline domain switching in minutes from UCI in minutes
 function get_offline_treshold()
   local uci = require('simple-uci').cursor()
-  local offline_treshold = uci:get('ffmuc', 'director', 'switch_after_offline', 120)
+  local offline_treshold = uci:get('ffmuc', 'director', 'switch_after_offline')
+  if offline_treshold == nil then
+    offline_treshold = 120
+  end
   if type(offline_treshold)=="string" then
     offline_treshold = tonumber(offline_treshold)
   end
@@ -52,6 +58,8 @@ end
 
 -- Returns true if node was offline long enough to perform domain switch
 function is_offline_treshold_reached()
+  local util = require 'gluon.util'
+
   if not path_exists("/tmp/ffmuc_director_gw_unreach") then
     return false
   end
@@ -68,16 +76,9 @@ function is_offline_treshold_reached()
   local offline_since = f:read('*a')
   f:close()
 
-  local current_uptime_handle = io.popen('cat /proc/uptime | cut -d "." -f1')
-  local current_uptime = tonumber(current_uptime_handle:read('*all'))
-  current_uptime_handle:close()
+  local offline_duration = util.get_uptime() - offline_since
 
-  local offline_duration = current_uptime - offline_since
-
-  if offline_duration > offline_treshold then
-    return true
-  end
-  return false
+  return offline_duration > offline_treshold
 end
 
 -- Returns whether or not a switch time has been set. Returns false on -1.
@@ -94,36 +95,25 @@ function switch_time_passed()
     return false
   end
 
-  if switch_time < current_epoch then
-    return true
-  end
-
-  return false
+  return switch_time < current_epoch
 end
 
 -- Returns true if the domain director is enabled in UCI
--- Returns true also in case UCI key is not present
 function is_enabled_uci()
   local uci = require('simple-uci').cursor()
 
-  return uci:get_bool("ffmuc", "director", "enabled", true)
+  return uci:get_bool("ffmuc", "director", "enabled")
 end
 
 -- Returns true if the domain director is enabled in-site for the current domain
 function is_enabled_site()
   local site = require 'gluon.site'
 
-  if not site.domain_director.enabled(false) then
-    return false
-  end
-  return true
+  return site.domain_director.enabled(false)
 end
 
 -- Returns if true the domain director is enabled in-site for the current domain
 -- and by the user (Active by default)
 function is_enabled()
-  if is_enabled_site() and is_enabled_uci() then
-    return true
-  end
-  return false
+  return is_enabled_site() and is_enabled_uci()
 end
