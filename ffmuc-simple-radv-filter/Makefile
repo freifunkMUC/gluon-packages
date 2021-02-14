@@ -8,6 +8,7 @@ include $(TOPDIR)/../package/gluon.mk
 
 define Package/ffmuc-simple-radv-filter
   TITLE:=Filters RAs 
+  DEPENDS:=+gluon-ebtables +libgluonutil +libbatadv
 endef
 
 $(eval $(call BuildPackageGluon,ffmuc-simple-radv-filter))
