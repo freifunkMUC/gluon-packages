@@ -14,8 +14,6 @@ if [ "$?" -ne "0" ]; then
 	logger -t radv_filter_simple "Setting IPv6 Gateway to $gwl"
 	ebtables-tiny -F RADV_FILTER
 	ebtables-tiny -A RADV_FILTER -s $gwl -j ACCEPT
-else
-	logger -t radv_filter_simple "IPv6 Gateway not changed"
 fi
 if [ "$?" -ne "0" ]; then
 	logger -t radv_filter_simple "Setting gateway failed failling back to accept all"
