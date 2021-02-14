@@ -1,0 +1,24 @@
+#!/bin/bash
+
+gwl=$(batctl gwl | grep \* | awk '{print $2}')
+
+ebtables=$(ebtables-tiny -L RADV_FILTER)
+if [ "$?" -ne "0" ]; then
+	logger -t radv_filter_simple "ebtables chain RADV_FILTER does not exist"
+	ebtables-tiny -N RADV_FILTER
+	ebtables-tiny -P RADV_FILTER DROP
+        ebtables-tiny -A FORWARD -p IPv6 -i bat0 --ip6-proto ipv6-icmp --ip6-icmp-type router-advertisement -j RADV_FILTER
+fi 
+ebtables=$(ebtables-tiny -L RADV_FILTER | grep -q $gwl)
+if [ "$?" -ne "0" ]; then
+	logger -t radv_filter_simple "Setting IPv6 Gateway to $gwl"
+	ebtables-tiny -F RADV_FILTER
+	ebtables-tiny -A RADV_FILTER -s $gwl -j ACCEPT
+else
+	logger -t radv_filter_simple "IPv6 Gateway not changed"
+fi
+if [ "$?" -ne "0" ]; then
+	logger -t radv_filter_simple "Setting gateway failed failling back to accept all"
+	ebtables-tiny -F RADV_FILTER
+	ebtables-tiny -A RADV_FILTER -j ACCEPT
+fi
