@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 gwl=$(batctl gwl | grep \* | awk '{print $2}')
 
