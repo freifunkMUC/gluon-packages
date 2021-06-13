@@ -41,9 +41,6 @@ State of the different packages:
 - gluon-domain-migration-ffmuc
   - Migrates from multisite config to multidomain config
 
-- tecff-ath9k-broken-wifi-workaround
+- ffgg-ath9k-broken-wifi-workaround
   - tries to recover nodes that have problems with wifi connections
-  - Upstream: https://github.com/tecff/gluon-packages/tree/master/tecff-ath9k-broken-wifi-workaround
- 
-- tecff-respondd-watchdog
-  - starts gluon-respondd if it isn't running
+  - Upstream: https://github.com/freifunkgg/packages-ffgg/tree/master/ffgg-ath9k-broken-wifi-workaround
