@@ -20,6 +20,10 @@ State of the different packages:
   - Based on https://github.com/freifunk-darmstadt/ffda-packages/tree/57622c7/ffda-domain-director
   - Makes the node ask a director for zone configuration
 
+- ffmuc-eol-ssid
+  - Based on https://gitlab.karlsruhe.freifunk.net/firmware/packages/-/tree/master/ffka-eol-ssid
+  - Broadcasts an EOL SSID (supportende.muenchen.freifunk.net) on low flash/RAM devices
+
 - gluon-web-ffmuc-domain-director
   - Based on https://github.com/freifunk-darmstadt/ffda-packages/tree/91a3bd3893/gluon-web-ffda-domain-director
   - enables configuration via config-mode
