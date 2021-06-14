@@ -18,3 +18,6 @@ State of the different packages:
 
 - ffmuc-simple-radv-filter
   - Upstream: https://github.com/freifunkMUC/gluon-packages/tree/main/ffmuc-simple-radv-filter
+
+- ffmuc-autoupgrade-experimental2testing
+  - Upstream: https://github.com/freifunkMUC/gluon-packages/tree/main/ffmuc-autoupgrade-experimental2testing

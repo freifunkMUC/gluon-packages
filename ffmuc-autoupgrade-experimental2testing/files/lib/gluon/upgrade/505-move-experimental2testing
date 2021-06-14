@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+
+local uci = require("simple-uci").cursor()
+
+local branch = uci:get('autoupdater', 'settings', 'branch')
+
+if "experimental" == branch then
+    uci:set('autoupdater', 'settings', 'branch', 'testing')
+end
+
+uci:save('autoupdater')
