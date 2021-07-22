@@ -8,4 +8,10 @@ if "wireguard" == branch then
     uci:set('autoupdater', 'settings', 'branch', 'experimental')
 end
 
+local wireguard = uci:get('autoupdater', 'wireguard')
+
+if wireguard then
+    uci:delete('autoupdater', 'wireguard')
+end
+
 uci:save('autoupdater')
