@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+
+local uci = require("simple-uci").cursor()
+
+local branch = uci:get('autoupdater', 'settings', 'branch')
+
+if "wireguard" == branch then
+    uci:set('autoupdater', 'settings', 'branch', 'experimental')
+end
+
+uci:save('autoupdater')
