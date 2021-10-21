@@ -7,7 +7,7 @@ PKG_RELEASE:=1
 
 include $(TOPDIR)/../package/gluon.mk
 
-define Package/ffffm-eol-ssid
+define Package/ffmuc-eol-ssid
   TITLE:=ffmuc-eol-ssid
   DEPENDS:=+gluon-core
 endef
