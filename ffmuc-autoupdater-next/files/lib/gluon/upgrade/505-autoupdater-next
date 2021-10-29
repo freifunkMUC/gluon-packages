@@ -1,0 +1,7 @@
+#!/usr/bin/lua
+
+local uci = require("simple-uci").cursor()
+
+uci:set('autoupdater', 'settings', 'branch', 'next')
+
+uci:save('autoupdater')
