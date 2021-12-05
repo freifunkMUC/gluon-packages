@@ -3,20 +3,25 @@
 local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
--- Reuse IBSS mac address
-local macaddr = util.generate_mac(2)
-if not macaddr then
-	return
+-- Create UCI configuration file if not present
+os.execute("touch /etc/config/ffmuc")
+
+-- Delete old additional ssid
+uci:delete('wireless', 'dep_radio0');
+
+-- Get/initialize enabled state
+if not uci:get('ffmuc', 'eol_ssid') then
+        uci:section('ffmuc', 'eol_ssid', 'eol_ssid', {
+                enabled = true
+        })
+        uci:save('ffmuc')
+end
+local enabled = uci:get_bool('ffmuc', 'eol_ssid', 'enabled')
+
+-- Change client radio ssid
+if enabled then
+        uci:set('wireless', 'client_radio0', 'ssid', 'bitte-router-erneuern.ffmuc.net')
 end
 
-uci:section('wireless', 'wifi-iface', 'dep_radio0', {
-	ifname = 'eolnotice0',
-	network = 'client',
-	disabled = '0',
-	device = 'radio0',
-	mode = 'ap',
-	macaddr = macaddr,
-	ssid = 'bitte-router-erneuern.ffmuc.net',
-})
+uci:save('wireless')
 
-uci:commit('wireless')
