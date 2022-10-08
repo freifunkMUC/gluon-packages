@@ -7,7 +7,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(TOPDIR)/../package/gluon.mk
 
-define Package/ffmuc-autodater-next2stable
+define Package/ffmuc-autoupdater-next2stable
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Migration script to switch autoupdater on nodes from next to stable
