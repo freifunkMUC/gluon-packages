@@ -28,6 +28,10 @@ State of the different packages:
   - Based on https://github.com/freifunk-darmstadt/ffda-packages/tree/91a3bd3893/gluon-web-ffda-domain-director
   - enables configuration via config-mode
 
+- ffho-autoupdater-wifi-fallback
+  - Implements switching to fallback mode if we are cut off from the mesh to autoupdate
+  - Upstream: https://git.ffho.net/FreifunkHochstift/ffho-packages/src/master/ffho-autoupdater-wifi-fallback
+
 - ffmuc-autoupgrade-experimental2testing
   - Migrates all node which are on experimental to testing
 
