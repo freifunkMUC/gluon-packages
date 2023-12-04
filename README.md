@@ -29,8 +29,9 @@ State of the different packages:
   - enables configuration via config-mode
 
 - ffho-autoupdater-wifi-fallback
-  - Implements switching to fallback mode if we are cut off from the mesh to autoupdate
-  - Upstream: https://git.ffho.net/FreifunkHochstift/ffho-packages/src/master/ffho-autoupdater-wifi-fallback
+  - Upstream: <https://github.com/freifunk-gluon/community-packages/tree/master/ffac-autoupdater-wifi-fallback>
+  - Legacy package that allows switching to fallback mode if we are cut off from the mesh to autoupdate.
+  - Only works up to Gluon v2021.x
 
 - ffmuc-autoupgrade-experimental2testing
   - Migrates all node which are on experimental to testing
