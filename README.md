@@ -3,6 +3,10 @@ custom ffmuc packages feed for gluon
 
 State of the different packages:
 
+- ffdon-domain-merge
+  - Package that migrates the old ffdon domains to the new ones after a sysupgrade.
+  - Requires Gluon v2021 or later.
+
 - ffda-location
   - Based on https://github.com/freifunk-darmstadt/ffda-packages/tree/57622c7/ffda-location
   - Package to obtain surrounding wifis to obtionally request the location from a locator service
