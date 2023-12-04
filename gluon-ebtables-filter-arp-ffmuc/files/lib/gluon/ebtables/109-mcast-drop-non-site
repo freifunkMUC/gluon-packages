@@ -1,2 +1,0 @@
-rule 'MULTICAST_OUT -p ARP --arp-opcode Reply --arp-ip-src ! 10.80.0.0/16 -j DROP'
-rule 'MULTICAST_OUT -p ARP --arp-opcode Request --arp-ip-dst ! 10.80.0.0/16 -j DROP'

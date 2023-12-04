@@ -1,1 +1,0 @@
-rule 'MULTICAST_OUT -p 0xfc00 -j RETURN'
