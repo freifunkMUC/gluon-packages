@@ -1,0 +1,36 @@
+#!/usr/bin/lua
+
+-- WARNING: switch_domain requires Gluon v2021 or newer
+
+local uci = require('simple-uci').cursor()
+
+local domain = uci:get('gluon', 'core', 'switch_domain')
+if domain then
+    -- do nothing if there is already a switch_domain set
+    os.exit(0)
+end
+
+local current_domain = uci:get('gluon', 'core', 'domain')
+if not current_domain then
+    -- do nothing if we don't even have a domain set (just in case)
+    os.exit(0)
+end
+
+local new_domains = {
+    ffdon_harburg     = 'ffdon_mitte',
+    ffdon_monheim     = 'ffdon_mitte',
+    ffdon_wemding     = 'ffdon_mitte',
+    ffdon_noerdlingen = 'ffdon_nordwest',
+    ffdon_oettingen   = 'ffdon_nordwest',
+    ffdon_baeumenheim = 'ffdon_sued',
+    ffdon_donauwoerth = 'ffdon_sued',
+    ffdon_rain        = 'ffdon_sued',
+    ffdon_umland      = 'ffdon_sued',
+}
+
+local new_domain = new_domains[current_domain]
+if new_domain then
+    print("Switching from domain " .. current_domain .. " to new domain " .. new_domain)
+    uci:set('gluon', 'core', 'switch_domain', new_domain)
+    uci:save('gluon')
+end
