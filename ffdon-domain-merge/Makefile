@@ -7,7 +7,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(TOPDIR)/../package/gluon.mk
 
-define Package/ffdon-domain-merge
+define Package/$(PKG_NAME)
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=FFdon Domain Merge
@@ -15,7 +15,7 @@ define Package/ffdon-domain-merge
   MAINTAINER:=Freifunk München <muenchen@freifunk.net>
 endef
 
-define Package/ffdon-domain-merge/description
+define Package/$(PKG_NAME)/description
 	Script for merging ffdon domains after a sysupgrade
 endef
 
@@ -28,11 +28,11 @@ endef
 define Build/Compile
 endef
 
-define Package/ffdon-domain-merge/install
+define Package/$(PKG_NAME)/install
 	$(CP) ./files/* $(1)/
 endef
 
-define Package/ffdon-domain-merge/postinst
+define Package/$(PKG_NAME)/postinst
 endef
 
-$(eval $(call BuildPackage,ffdon-domain-merge))
+$(eval $(call BuildPackage,$(PKG_NAME)))
