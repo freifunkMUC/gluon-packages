@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Double check that during the gluon-reconfigure there is no more "freifunk" config
+[ ! -e /etc/config/freifunk ] && exit 0
+
+# shellcheck source=ffulm-migration/files/lib/gluon/ffulm-migration/migration-tools.sh
+. /lib/gluon/ffulm-migration/migration-tools.sh
+
+migration_log ffulm-gluon-upgrade err "ERROR: Found /etc/config/freifunk as part of gluon-reconfigure"

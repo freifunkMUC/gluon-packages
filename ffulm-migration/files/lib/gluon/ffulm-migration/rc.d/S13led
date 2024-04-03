@@ -1,0 +1,11 @@
+#!/bin/sh /etc/rc.common
+
+# shellcheck disable=SC2034
+START=13
+
+start() {
+        /etc/init.d/led start
+        # shellcheck source=/dev/null
+        . /etc/diag.sh
+        set_state failsafe
+}

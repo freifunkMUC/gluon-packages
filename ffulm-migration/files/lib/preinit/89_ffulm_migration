@@ -1,0 +1,23 @@
+#!/bin/sh
+
+
+
+ffulm_migration_enable() {
+	# WARNING: we are assuming that freifunk setting are only from ffulm.
+	# This might cause conflicts for other firmware migrations in the future that use the same uci config
+	if uci -q get 'freifunk.@settings[0]' > /dev/null
+	then
+		# shellcheck source=ffulm-migration/files/lib/gluon/ffulm-migration/migration-tools.sh
+		. /lib/gluon/ffulm-migration/migration-tools.sh
+
+		migration_log ffulm-migration notice "Enabling ffulm config migration"
+
+		echo '/lib/gluon/ffulm-migration/rc.d' > /tmp/rc_d_path
+
+		# Force-disabled setup-mode to avoid conflicts with /tmp/rc_d_path
+		uci set 'gluon-setup-mode.@setup_mode[0].enabled'=0
+		uci set 'gluon-setup-mode.@setup_mode[0].configured'=1
+	fi
+}
+
+boot_hook_add preinit_main ffulm_migration_enable
