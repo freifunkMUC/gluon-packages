@@ -1,0 +1,19 @@
+#!/bin/sh /etc/rc.common
+
+# shellcheck disable=SC2034
+START=96
+
+boot() {
+    # shellcheck source=ffulm-migration/files/lib/gluon/ffulm-migration/migration-tools.sh
+    . /lib/gluon/ffulm-migration/migration-tools.sh
+
+    migration_log ffulm-reboot notice "Finished migration"
+
+    # Try to dump logread
+    logread > /root/ffulm-migration-logread.txt || true
+    sync
+
+    if ! uci -q get ${FFULM_PREFIX}freifunk.@settings[0].disable_migration_reboot; then
+        reboot
+    fi
+}

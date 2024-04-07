@@ -1,0 +1,94 @@
+#!/bin/sh /etc/rc.common
+
+# Needs to start just before the next gluon-reconfigure
+# shellcheck disable=SC2034
+START=19
+
+boot() {
+    # shellcheck source=ffulm-migration/files/lib/gluon/ffulm-migration/migration-tools.sh
+    . /lib/gluon/ffulm-migration/migration-tools.sh
+
+    migration_log ffulm-cleanup notice "Starting ffulm cleanup"
+
+    cleanup_misc_files() {
+        # delete ffulm remnants that are not needed anymore and can cause conflicts
+        for file in \
+            /etc/crontabs/root \
+            /etc/firewall.user \
+            /etc/opkg/keys/* \
+            /etc/sysctl.conf \
+            /etc/sysupgrade.conf \
+            /etc/uhttpd.crt \
+            /etc/uhttpd.key \
+            ;
+        do
+            if rm "${file}"; then
+                migration_log ffulm-cleanup info "Deleted ${file}"
+            else
+                migration_log ffulm-cleanup warn "Failed to delete ${file}"
+            fi
+        done
+    }
+
+    cleanup_configs() {
+        for file in "/etc/config/${FFULM_PREFIX}"*
+        do
+            rm "${file}" && migration_log ffulm-cleanup info "Deleted ${file}"
+        done
+    }
+
+    # Delete entries like "10.33.127.0 node"
+    cleanup_etc_hosts() {
+        line_regex='10\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\} node'
+        hosts_file=/etc/hosts
+        if matched_line=$(grep "${line_regex}" ${hosts_file}); then
+            sed -i "/${line_regex}/d" ${hosts_file}
+            migration_log ffulm-cleanup info "Deleting the following line from ${hosts_file}: ${matched_line}"
+        else
+            migration_log ffulm-cleanup warn "Failed to find regex ${line_regex} in ${hosts_file}: $(cat ${hosts_file})"
+        fi
+    }
+
+    delete_root_password() {
+        if [ ! -e /etc/dropbear/authorized_keys ]
+        then
+            migration_log ffulm-cleanup warn "Did not find an authorized_key file. Remote access will only be possible via SSH-key."
+        fi
+
+        if [ "$(wc -l /etc/dropbear/authorized_keys | awk '{print $1}')" -lt 1 ]
+        then
+            migration_log ffulm-cleanup warn "Found no key in authorized_key file. Remote access will only be possible via SSH-key."
+        fi
+
+        # Unfortunately the default password is an empty password with a salt+hash that cannot be easily distinguished on the device
+        # We decided to lock out users without an SSH key in order to have no compromised devices.
+        passwd -d -l root && migration_log ffulm-cleanup notice "Deleted root password and locked account"
+    }
+
+
+    # Start the cleanup process
+    # See also https://github.com/freifunkMUC/site-ffm/pull/370#issuecomment-2041163451
+
+    cleanup_misc_files
+    cleanup_etc_hosts
+
+    # Only wipe configs if there has no override been specified
+    if ! uci -q get ${FFULM_PREFIX}freifunk.@settings[0].preserve_configs
+    then
+        cleanup_configs
+    else
+        migration_log ffulm-cleanup warn "Preserving files in /etc/config/${FFULM_PREFIX}..."
+    fi
+
+    # Preserve root password if user has overwritten it
+    if preserve_root_password=$(uci -q get ${FFULM_PREFIX}freifunk.@settings[0].preserve_root_password)
+    then
+        if [ "$preserve_root_password" = "i_know_what_i_am_doing" ]; then
+            migration_log ffulm-cleanup warn "Preserving root password."
+        else
+            delete_root_password
+        fi
+    else
+        delete_root_password
+    fi
+}

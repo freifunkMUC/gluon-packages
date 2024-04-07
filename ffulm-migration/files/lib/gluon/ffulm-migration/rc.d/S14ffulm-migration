@@ -1,0 +1,62 @@
+#!/bin/sh /etc/rc.common
+
+# shellcheck disable=SC2034
+START=14
+
+boot() {
+    # shellcheck source=ffulm-migration/files/lib/gluon/ffulm-migration/migration-tools.sh
+    . /lib/gluon/ffulm-migration/migration-tools.sh
+
+    ffulm_domain="ffmuc_welt" # TODO change to ulm
+
+    migration_log ffulm-migration notice "Starting ffulm config migration"
+
+    # Try to migrate the hostname
+    if pretty_hostname=$(uci -q get "${FFULM_PREFIX}freifunk.@settings[0].name")
+    then
+        pretty-hostname "${pretty_hostname}"
+        migration_log ffulm-migration info "Migrated hostname: ${pretty_hostname} and $(uci get 'system.@system[0].hostname')"
+
+    fi
+
+    # Try to migrate the owner
+    if owner=$(uci -q get "${FFULM_PREFIX}freifunk.@settings[0].contact")
+    then
+        uci -q get gluon-node-info.@owner[0] >/dev/null || uci add gluon-node-info owner
+        uci set 'gluon-node-info.@owner[0].contact'="${owner}"
+        uci commit gluon-node-info
+        migration_log ffulm-migration info "Migrated owner: ${owner}"
+    fi
+
+    # Try to migrate the location
+    if long=$(uci -q get "${FFULM_PREFIX}freifunk.@settings[0].longitude") && lat=$(uci -q get "${FFULM_PREFIX}freifunk.@settings[0].latitude")
+    then
+        uci set 'gluon-node-info.@location[0].share_location'="1"
+        uci set 'gluon-node-info.@location[0].latitude'="${lat}"
+        uci set 'gluon-node-info.@location[0].longitude'="${long}"
+        uci commit gluon-node-info
+        migration_log ffulm-migration info "Migrated long/lat: ${long}/${lat}"
+    fi
+
+    if mesh_on_wan=$(uci -q get "${FFULM_PREFIX}freifunk.@settings[0].mesh_on_wan")
+    then
+        # if Mesh-on-WAN is enabled we do not want to enable the conflicting Mesh VPN
+        if [ "$mesh_on_wan" = "1" ];
+        then
+            uci set gluon.mesh_vpn.enabled=0
+        else
+            uci set gluon.mesh_vpn.enabled=1
+        fi
+        migration_log ffulm-migration info "Migrated mesh_vpn: not ${mesh_on_wan}"
+
+        # trigger reconfigure later in S20
+        uci set gluon.core.reconfigure=1
+        uci commit gluon
+    fi
+
+    # Set domain
+    migration_log ffulm-migration info "Set domain to ${ffulm_domain}"
+    uci set gluon.core.domain="${ffulm_domain}"
+    uci set gluon.core.reconfigure=1
+    uci commit gluon
+}

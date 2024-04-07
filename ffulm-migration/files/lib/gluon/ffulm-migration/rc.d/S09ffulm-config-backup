@@ -1,0 +1,32 @@
+#!/bin/sh /etc/rc.common
+
+# shellcheck disable=SC2034
+START=09
+
+boot() {
+    # shellcheck source=ffulm-migration/files/lib/gluon/ffulm-migration/migration-tools.sh
+    . /lib/gluon/ffulm-migration/migration-tools.sh
+
+    migration_log ffulm-config-backup notice "Starting ffulm config backup"
+
+    migration_log ffulm-config-backup notice "Prefixing all ffulm uci configs with ${FFULM_PREFIX}..."
+    cd /etc/config/ || exit 1
+    for file in *
+    do
+        if [ "${file#*"${FFULM_PREFIX}"}" != "$file" ]; then
+            migration_log ffulm-config-backup warn "Found existing ffulm backup: ${file}"
+            continue
+        fi
+        mv -vn "${file}" "${FFULM_PREFIX}${file}" && \
+        migration_log ffulm-config-backup info "Created backup of ffulm uci config: ${file}"
+    done
+
+    # manually restore all default configs from /rom as those should have been written during config
+    # warning: only works if overlayfs is being used. If not, only a successive sysupgrade can restore the files.
+    cd /rom/etc/config || exit 1
+    for file in *
+    do
+        cp -dp "/rom/etc/config/${file}" "/etc/config/${file}" && \
+        migration_log ffulm-config-backup info "Restoring uci config from /rom: ${file}"
+    done
+}
