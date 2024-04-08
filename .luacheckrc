@@ -8,6 +8,14 @@ read_globals = {
 	"unpack",
 }
 
+-- exclude old and unmaintained files
+exclude_files = {
+	"ffho-autoupdater-wifi-fallback/luasrc/usr/lib/lua/autoupdater-wifi-fallback/util.lua",
+	"ffho-autoupdater-wifi-fallback/luasrc/usr/sbin/autoupdater-wifi-fallback",
+	"ffho-autoupdater-wifi-fallback/luasrc/usr/sbin/wpa_supplicant",
+	"ffho-web-ap-timer/luasrc/lib/gluon/config-mode/model/admin/ap-timer.lua",
+}
+
 include_files = {
 	"**/*.lua",
 	"**/luasrc/**/*",
