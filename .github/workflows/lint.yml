@@ -1,0 +1,15 @@
+name: Lint
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  Lua:
+    name: Lua
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: sudo apt-get install lua-check
+      - name: Lint Lua
+        run: luacheck .
