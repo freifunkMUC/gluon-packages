@@ -7,7 +7,7 @@ boot() {
     # shellcheck source=ffulm-migration/files/lib/gluon/ffulm-migration/migration-tools.sh
     . /lib/gluon/ffulm-migration/migration-tools.sh
 
-    ffulm_domain="ffmuc_welt" # TODO change to ulm
+    ffulm_domain="ffmuc_ulm"
 
     migration_log ffulm-migration notice "Starting ffulm config migration"
 
